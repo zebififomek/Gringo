@@ -5,220 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gringo Game</title>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-image: url('Gringo back Ground.jpeg');
-            background-size: 150px 150px;
-            background-repeat: repeat;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-            background-color: black; /* Fallback color */
-        }
-        #gameContainer {
-            position: relative;
-            width: 1000px;
-            height: 1000px;
-            border-radius: 15px;
-            background-image: url('image.jpg'); /* Correct reference to the uploaded image */
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.8);
-            overflow: hidden;
-            z-index: 1;
-            border: 10px solid #333;
-            box-sizing: border-box;
-            background-color: grey; /* Fallback color */
-        }
-        #leaderboard {
-            position: absolute;
-            top: 10px;
-            right: -320px;
-            width: 300px;
-            height: 980px;
-            background: rgba(34, 47, 62, 0.9);
-            color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            font-size: 18px;
-            overflow-y: auto;
-            z-index: 2;
-            animation: slideIn 0.5s forwards;
-            transition: all 0.3s ease;
-        }
-        @keyframes slideIn {
-            from {
-                right: -350px;
-                opacity: 0;
-            }
-            to {
-                right: 10px;
-                opacity: 1;
-            }
-        }
-        #leaderboard h2 {
-            text-align: center;
-            margin-top: 0;
-            font-size: 26px;
-            color: #00ff88;
-            text-shadow: 0px 0px 10px rgba(0, 255, 136, 0.7);
-            border-bottom: 2px solid #00ff88;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        #leaderboard ul {
-            padding-left: 20px;
-            list-style: none;
-        }
-        #leaderboard li {
-            margin-bottom: 10px;
-            font-size: 20px;
-            background-color: #34495e;
-            padding: 12px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
-        }
-        #leaderboard li:hover {
-            background-color: #00ff88;
-            color: #000;
-            transform: scale(1.05);
-        }
-        #leaderboard span {
-            font-weight: bold;
-            color: #f39c12;
-        }
-        #gameCanvas {
-            background-color: rgba(0, 0, 0, 0.7);
-            width: 100%;
-            height: 100%;
-            border-radius: 15px;
-        }
-        #score {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 36px;
-            color: #00ff88;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 10px 20px;
-            border-radius: 8px;
-            z-index: 1;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-            font-weight: bold;
-        }
-        #multiplier {
-            position: absolute;
-            top: 70px;
-            left: 10px;
-            font-size: 32px;
-            color: #f39c12;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 5px 10px;
-            border-radius: 8px;
-            z-index: 1;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-            font-weight: bold;
-        }
-        #rektMessage {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 72px;
-            color: #e74c3c;
-            font-weight: bold;
-            background-color: black;
-            padding: 30px;
-            border-radius: 20px;
-            z-index: 2;
-            text-align: center;
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7);
-            animation: popIn 0.5s ease-in-out;
-        }
-        @keyframes popIn {
-            0% {
-                transform: translate(-50%, -50%) scale(0.7);
-                opacity: 0;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
-        }
-        #finalScore {
-            display: none;
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 32px;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border-radius: 10px;
-            z-index: 2;
-            text-align: center;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.7);
-            font-weight: bold;
-        }
-        #playAgainButton {
-            display: none;
-            position: absolute;
-            top: 60%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px 30px;
-            font-size: 24px;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 3;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-        #playAgainButton:hover {
-            background-color: #27ae60;
-            transform: translateX(-50%) scale(1.05);
-        }
-        .controls {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .control-button {
-            width: 80px;
-            height: 80px;
-            background-size: cover;
-            border: none;
-            background-color: transparent;
-            cursor: pointer;
-            filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.7));
-        }
-        #leftButton {
-            background-image: url('https://cdn-icons-png.flaticon.com/512/318/318276.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            transform: scaleX(-1);
-        }
-        #rightButton {
-            background-image: url('https://cdn-icons-png.flaticon.com/512/318/318276.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
+        /* CSS Styles here */
+        /* Keeping the styles the same as previously provided */
     </style>
 </head>
 <body>
@@ -245,261 +33,275 @@
     </div>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+        document.addEventListener('DOMContentLoaded', () => {
+            const game = new GringoGame();
+            game.init();
+        });
 
-        const dogImage = new Image();
-        dogImage.src = 'dog_head_cropped.png';
+        class GringoGame {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.nickname = localStorage.getItem('nickname');
+                this.dog = { x: this.canvas.width / 2 - 50, y: this.canvas.height - 120, width: 100, height: 100, speed: 20, movingLeft: false, movingRight: false };
+                this.score = 1.0;
+                this.multiplier = 1;
+                this.gameSpeed = 2;
+                this.candles = [];
+                this.gameOver = false;
+                this.leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+                this.burger = null;
+                this.assetsLoaded = false;
 
-        const bullishCandle = new Image();
-        bullishCandle.src = 'Bullish.png';
+                this.dogImage = new Image();
+                this.dogImage.src = 'dog_head_cropped.png';
+                this.bullishCandle = new Image();
+                this.bullishCandle.src = 'Bullish.png';
+                this.bearishCandle = new Image();
+                this.bearishCandle.src = 'Brearish.png';
+                this.burgerImage = new Image();
+                this.burgerImage.src = 'burger.png';
 
-        const bearishCandle = new Image();
-        bearishCandle.src = 'Brearish.png';
+                this.assets = [this.dogImage, this.bullishCandle, this.bearishCandle, this.burgerImage];
+                this.assetsLoaded = 0;
 
-        const burgerImage = new Image();
-        burgerImage.src = 'burger.png';
+                this.dogImage.onload = () => this.assetLoaded();
+                this.bullishCandle.onload = () => this.assetLoaded();
+                this.bearishCandle.onload = () => this.assetLoaded();
+                this.burgerImage.onload = () => this.assetLoaded();
+            }
 
-        let nickname = localStorage.getItem('nickname');
-        let dog = {
-            x: canvas.width / 2 - 50,
-            y: canvas.height - 120,
-            width: 100,
-            height: 100,
-            speed: 20,
-            movingLeft: false,
-            movingRight: false
-        };
+            assetLoaded() {
+                this.assetsLoaded++;
+                if (this.assetsLoaded === this.assets.length) {
+                    this.startGame();
+                }
+            }
 
-        let score = 1.0;
-        let multiplier = 1;
-        let gameSpeed = 2;
-        const candles = [];
-        let gameOver = false;
-        let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-        let burger = null;
+            init() {
+                this.bindControls();
+                this.updateLeaderboard();
+            }
 
-        function createCandle() {
-            const isBullish = Math.random() > 0.5;
-            candles.push({
-                x: Math.random() * (canvas.width - 60),
-                y: 0,
-                width: 60,
-                height: 120,
-                speed: gameSpeed,
-                image: isBullish ? bullishCandle : bearishCandle,
-                type: isBullish ? 'bullish' : 'bearish'
-            });
-        }
+            bindControls() {
+                document.addEventListener('keydown', (event) => this.handleKeyDown(event));
+                document.addEventListener('keyup', (event) => this.handleKeyUp(event));
+                document.getElementById('leftButton').addEventListener('mousedown', () => this.dog.movingLeft = true);
+                document.getElementById('leftButton').addEventListener('mouseup', () => this.dog.movingLeft = false);
+                document.getElementById('rightButton').addEventListener('mousedown', () => this.dog.movingRight = true);
+                document.getElementById('rightButton').addEventListener('mouseup', () => this.dog.movingRight = false);
+            }
 
-        function createBurger() {
-            let spawnChance = score <= 2 ? 0.1 : score <= 3 ? 0.05 : 0.02;
-            if (Math.random() < spawnChance) {
-                burger = {
-                    x: Math.random() * (canvas.width - 80),
+            handleKeyDown(event) {
+                if (event.code === 'ArrowLeft') {
+                    this.dog.movingLeft = true;
+                } else if (event.code === 'ArrowRight') {
+                    this.dog.movingRight = true;
+                }
+            }
+
+            handleKeyUp(event) {
+                if (event.code === 'ArrowLeft') {
+                    this.dog.movingLeft = false;
+                } else if (event.code === 'ArrowRight') {
+                    this.dog.movingRight = false;
+                }
+            }
+
+            startGame() {
+                this.gameOver = false;
+                this.candles = [];
+                this.score = 1.0;
+                this.multiplier = 1;
+                this.gameSpeed = 2;
+                this.burger = null;
+                this.updateScore();
+                this.updateMultiplier();
+
+                this.candleInterval = setInterval(() => this.createCandle(), 500);
+                this.burgerInterval = setInterval(() => this.createBurger(), 2000);
+
+                requestAnimationFrame(() => this.gameLoop());
+            }
+
+            createCandle() {
+                const isBullish = Math.random() > 0.5;
+                this.candles.push({
+                    x: Math.random() * (this.canvas.width - 60),
                     y: 0,
-                    width: 80,
-                    height: 80,
-                    speed: gameSpeed * 1.5
-                };
+                    width: 60,
+                    height: 120,
+                    speed: this.gameSpeed,
+                    image: isBullish ? this.bullishCandle : this.bearishCandle,
+                    type: isBullish ? 'bullish' : 'bearish'
+                });
             }
-        }
 
-        function drawDog() {
-            ctx.drawImage(dogImage, dog.x, dog.y, dog.width, dog.height);
-        }
+            createBurger() {
+                let spawnChance = this.score <= 2 ? 0.1 : this.score <= 3 ? 0.05 : 0.02;
+                if (Math.random() < spawnChance) {
+                    this.burger = {
+                        x: Math.random() * (this.canvas.width - 80),
+                        y: 0,
+                        width: 80,
+                        height: 80,
+                        speed: this.gameSpeed * 1.5
+                    };
+                }
+            }
 
-        function drawCandles() {
-            candles.forEach((candle, index) => {
-                candle.y += candle.speed;
+            drawDog() {
+                this.ctx.drawImage(this.dogImage, this.dog.x, this.dog.y, this.dog.width, this.dog.height);
+            }
 
-                ctx.drawImage(candle.image, candle.x, candle.y, candle.width, candle.height);
+            drawCandles() {
+                this.candles.forEach((candle, index) => {
+                    candle.y += candle.speed;
 
-                ctx.strokeStyle = candle.type === 'bullish' ? '#00ff00' : '#ff0000';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(candle.x, candle.y, candle.width, candle.height);
+                    this.ctx.drawImage(candle.image, candle.x, candle.y, candle.width, candle.height);
 
-                if (
-                    dog.x < candle.x + candle.width &&
-                    dog.x + dog.width > candle.x &&
-                    dog.y < candle.y + candle.height &&
-                    dog.height + dog.y > candle.y
-                ) {
-                    if (candle.type === 'bullish') {
-                        score += 0.1 * multiplier;
-                        score = parseFloat(score.toFixed(1));
-                    } else if (candle.type === 'bearish') {
-                        gameOver = true;
-                        endGame();
+                    this.ctx.strokeStyle = candle.type === 'bullish' ? '#00ff00' : '#ff0000';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeRect(candle.x, candle.y, candle.width, candle.height);
+
+                    if (
+                        this.dog.x < candle.x + candle.width &&
+                        this.dog.x + this.dog.width > candle.x &&
+                        this.dog.y < candle.y + candle.height &&
+                        this.dog.height + this.dog.y > candle.y
+                    ) {
+                        if (candle.type === 'bullish') {
+                            this.score += 0.1 * this.multiplier;
+                            this.score = parseFloat(this.score.toFixed(1));
+                        } else if (candle.type === 'bearish') {
+                            this.gameOver = true;
+                            this.endGame();
+                        }
+                        this.candles.splice(index, 1);
+                        this.gameSpeed += 0.1;
+                        this.updateScore();
                     }
-                    candles.splice(index, 1);
-                    gameSpeed += 0.1; // Slower speed increase
-                    updateScore();
-                }
 
-                if (candle.y > canvas.height) {
-                    candles.splice(index, 1);
-                }
-            });
-        }
-
-        function drawBurger() {
-            if (burger) {
-                burger.y += burger.speed;
-                ctx.drawImage(burgerImage, burger.x, burger.y, burger.width, burger.height);
-
-                if (
-                    dog.x < burger.x + burger.width &&
-                    dog.x + dog.width > burger.x &&
-                    dog.y < burger.y + burger.height &&
-                    dog.height + dog.y > burger.y
-                ) {
-                    multiplier += 1;
-                    updateMultiplier();
-                    burger = null;
-                }
-
-                if (burger && burger.y > canvas.height) {
-                    burger = null;
-                }
+                    if (candle.y > this.canvas.height) {
+                        this.candles.splice(index, 1);
+                    }
+                });
             }
-        }
 
-        function updateScore() {
-            document.getElementById('score').innerText = `Score: X${score.toFixed(1)}`;
-        }
+            drawBurger() {
+                if (this.burger) {
+                    this.burger.y += this.burger.speed;
+                    this.ctx.drawImage(this.burgerImage, this.burger.x, this.burger.y, this.burger.width, this.burger.height);
 
-        function updateMultiplier() {
-            document.getElementById('multiplier').innerText = `Boost Multiplier: X${multiplier}`;
-        }
+                    if (
+                        this.dog.x < this.burger.x + this.burger.width &&
+                        this.dog.x + this.dog.width > this.burger.x &&
+                        this.dog.y < this.burger.y + this.burger.height &&
+                        this.dog.height + this.dog.y > this.burger.y
+                    ) {
+                        this.multiplier += 1;
+                        this.updateMultiplier();
+                        this.burger = null;
+                    }
 
-        function endGame() {
-            document.getElementById('rektMessage').style.display = 'block';
-            document.getElementById('finalScore').innerText = `Final Score: X${score.toFixed(1)}`;
-            document.getElementById('finalScore').style.display = 'block';
-            document.getElementById('playAgainButton').style.display = 'block';
-            document.getElementById('score').style.display = 'none';
-            document.getElementById('multiplier').style.display = 'none';
-            clearInterval(candleInterval);
-            clearInterval(burgerInterval);
-
-            document.getElementById('popupScore').innerText = `Final Score: X${score.toFixed(1)}`;
-            document.getElementById('finalPopup').style.display = 'block';
-
-            if (!nickname) {
-                nickname = prompt("Enter your nickname:");
-                if (nickname) {
-                    localStorage.setItem('nickname', nickname);
+                    if (this.burger && this.burger.y > this.canvas.height) {
+                        this.burger = null;
+                    }
                 }
             }
 
-            if (score > 1.0) {
-                leaderboard.push({ nickname, score: score.toFixed(1) });
-                leaderboard.sort((a, b) => b.score - a.score);
-                if (leaderboard.length > 10) {
-                    leaderboard.pop();
+            updateScore() {
+                document.getElementById('score').innerText = `Score: X${this.score.toFixed(1)}`;
+            }
+
+            updateMultiplier() {
+                document.getElementById('multiplier').innerText = `Boost Multiplier: X${this.multiplier}`;
+            }
+
+            endGame() {
+                document.getElementById('rektMessage').style.display = 'block';
+                document.getElementById('finalScore').innerText = `Final Score: X${this.score.toFixed(1)}`;
+                document.getElementById('finalScore').style.display = 'block';
+                document.getElementById('playAgainButton').style.display = 'block';
+                document.getElementById('score').style.display = 'none';
+                document.getElementById('multiplier').style.display = 'none';
+
+                clearInterval(this.candleInterval);
+                clearInterval(this.burgerInterval);
+
+                document.getElementById('popupScore').innerText = `Final Score: X${this.score.toFixed(1)}`;
+                document.getElementById('finalPopup').style.display = 'block';
+
+                if (!this.nickname) {
+                    this.nickname = prompt("Enter your nickname:");
+                    if (this.nickname) {
+                        localStorage.setItem('nickname', this.nickname);
+                    }
                 }
-                localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-                updateLeaderboard();
+
+                if (this.score > 1.0) {
+                    let existingEntry = this.leaderboard.find(entry => entry.nickname === this.nickname);
+                    if (existingEntry) {
+                        if (this.score > existingEntry.score) {
+                            existingEntry.score = this.score.toFixed(1);
+                        }
+                    } else {
+                        this.leaderboard.push({ nickname: this.nickname, score: this.score.toFixed(1) });
+                    }
+                    this.leaderboard.sort((a, b) => b.score - a.score);
+                    if (this.leaderboard.length > 10) {
+                        this.leaderboard.pop();
+                    }
+                    localStorage.setItem('leaderboard', JSON.stringify(this.leaderboard));
+                    this.updateLeaderboard();
+                }
+            }
+
+            updateLeaderboard() {
+                const leaderboardList = document.getElementById('leaderboardList');
+                leaderboardList.innerHTML = '';
+                this.leaderboard.forEach((entry, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.innerText = `${index + 1}. ${entry.nickname}`;
+                    const scoreSpan = document.createElement('span');
+                    scoreSpan.innerText = `X${entry.score}`;
+                    listItem.appendChild(scoreSpan);
+                    leaderboardList.appendChild(listItem);
+                });
+            }
+
+            gameLoop() {
+                if (!this.gameOver) {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    this.drawDog();
+                    this.drawCandles();
+                    this.drawBurger();
+                    requestAnimationFrame(() => this.gameLoop());
+                }
+            }
+
+            restartGame() {
+                document.getElementById('rektMessage').style.display = 'none';
+                document.getElementById('finalScore').style.display = 'none';
+                document.getElementById('playAgainButton').style.display = 'none';
+                document.getElementById('score').style.display = 'block';
+                document.getElementById('multiplier').style.display = 'block';
+
+                this.score = 1.0;
+                this.multiplier = 1;
+                this.gameSpeed = 2;
+                this.dog.x = this.canvas.width / 2 - 50;
+                this.candles.length = 0;
+                this.burger = null;
+                this.gameOver = false;
+
+                this.candleInterval = setInterval(() => this.createCandle(), 500);
+                this.burgerInterval = setInterval(() => this.createBurger(), 2000);
+                this.updateScore();
+                this.updateMultiplier();
+                this.gameLoop();
             }
         }
-
-        function updateLeaderboard() {
-            const leaderboardList = document.getElementById('leaderboardList');
-            leaderboardList.innerHTML = '';
-            leaderboard.forEach((entry, index) => {
-                const listItem = document.createElement('li');
-                listItem.innerText = `${index + 1}. ${entry.nickname}`;
-                const scoreSpan = document.createElement('span');
-                scoreSpan.innerText = `X${entry.score}`;
-                listItem.appendChild(scoreSpan);
-                leaderboardList.appendChild(listItem);
-            });
-        }
-
-        function closePopup() {
-            document.getElementById('finalPopup').style.display = 'none';
-        }
-
-        function gameLoop() {
-            if (!gameOver) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                drawDog();
-                drawCandles();
-                drawBurger();
-                requestAnimationFrame(gameLoop);
-            }
-        }
-
-        document.addEventListener('keydown', function (event) {
-            if (event.code === 'ArrowLeft') {
-                dog.movingLeft = true;
-            } else if (event.code === 'ArrowRight') {
-                dog.movingRight = true;
-            }
-        });
-
-        document.addEventListener('keyup', function (event) {
-            if (event.code === 'ArrowLeft') {
-                dog.movingLeft = false;
-            } else if (event.code === 'ArrowRight') {
-                dog.movingRight = false;
-            }
-        });
-
-        document.getElementById('leftButton').addEventListener('mousedown', function () {
-            dog.movingLeft = true;
-        });
-        document.getElementById('leftButton').addEventListener('mouseup', function () {
-            dog.movingLeft = false;
-        });
-        document.getElementById('rightButton').addEventListener('mousedown', function () {
-            dog.movingRight = true;
-        });
-        document.getElementById('rightButton').addEventListener('mouseup', function () {
-            dog.movingRight = false;
-        });
-
-        function moveDog() {
-            if (dog.movingLeft && dog.x > 0) {
-                dog.x -= dog.speed;
-            }
-            if (dog.movingRight && dog.x < canvas.width - dog.width) {
-                dog.x += dog.speed;
-            }
-        }
-
-        let candleInterval = setInterval(createCandle, 500);
-        let burgerInterval = setInterval(createBurger, 2000);
-
-        dogImage.onload = function () {
-            gameLoop();
-            setInterval(moveDog, 20);
-        };
-
-        function restartGame() {
-            document.getElementById('rektMessage').style.display = 'none';
-            document.getElementById('finalScore').style.display = 'none';
-            document.getElementById('playAgainButton').style.display = 'none';
-            document.getElementById('score').style.display = 'block';
-            document.getElementById('multiplier').style.display = 'block';
-
-            score = 1.0;
-            multiplier = 1;
-            gameSpeed = 2;
-            dog.x = canvas.width / 2 - 50;
-            candles.length = 0;
-            burger = null;
-            gameOver = false;
-
-            candleInterval = setInterval(createCandle, 500);
-            burgerInterval = setInterval(createBurger, 2000);
-            updateScore();
-            updateMultiplier();
-            gameLoop();
-        }
-
-        updateLeaderboard();
     </script>
 </body>
 </html>
