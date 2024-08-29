@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dog Candle Game</title>
+    <title>Gringo Game</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            background-image: url('./Gringo back Ground.jpeg');
+            background-image: url('Gringo back Ground.jpeg');
             background-size: 150px 150px;
             background-repeat: repeat;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -24,7 +24,7 @@
             width: 1000px;
             height: 1000px;
             border-radius: 15px;
-            background-image: url('./image.jpg');
+            background-image: url('image.jpg'); /* Correct reference to the uploaded image */
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -34,6 +34,74 @@
             border: 10px solid #333;
             box-sizing: border-box;
             background-color: grey; /* Fallback color */
+        }
+        #leaderboard {
+            position: absolute;
+            top: 10px;
+            right: -320px;
+            width: 300px;
+            height: 980px;
+            background: rgba(34, 47, 62, 0.9);
+            color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            font-size: 18px;
+            overflow-y: auto;
+            z-index: 2;
+            animation: slideIn 0.5s forwards;
+            transition: all 0.3s ease;
+        }
+        @keyframes slideIn {
+            from {
+                right: -350px;
+                opacity: 0;
+            }
+            to {
+                right: 10px;
+                opacity: 1;
+            }
+        }
+        #leaderboard h2 {
+            text-align: center;
+            margin-top: 0;
+            font-size: 26px;
+            color: #00ff88;
+            text-shadow: 0px 0px 10px rgba(0, 255, 136, 0.7);
+            border-bottom: 2px solid #00ff88;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        #leaderboard ul {
+            padding-left: 20px;
+            list-style: none;
+        }
+        #leaderboard li {
+            margin-bottom: 10px;
+            font-size: 20px;
+            background-color: #34495e;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        #leaderboard li:hover {
+            background-color: #00ff88;
+            color: #000;
+            transform: scale(1.05);
+        }
+        #leaderboard span {
+            font-weight: bold;
+            color: #f39c12;
+        }
+        #gameCanvas {
+            background-color: rgba(0, 0, 0, 0.7);
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
         }
         #score {
             position: absolute;
@@ -45,6 +113,7 @@
             padding: 10px 20px;
             border-radius: 8px;
             z-index: 1;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
             font-weight: bold;
         }
         #multiplier {
@@ -57,6 +126,7 @@
             padding: 5px 10px;
             border-radius: 8px;
             z-index: 1;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
             font-weight: bold;
         }
         #rektMessage {
@@ -73,6 +143,34 @@
             border-radius: 20px;
             z-index: 2;
             text-align: center;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7);
+            animation: popIn 0.5s ease-in-out;
+        }
+        @keyframes popIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0.7);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+        #finalScore {
+            display: none;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            z-index: 2;
+            text-align: center;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.7);
+            font-weight: bold;
         }
         #playAgainButton {
             display: none;
@@ -88,7 +186,13 @@
             border-radius: 8px;
             cursor: pointer;
             z-index: 3;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
             font-weight: bold;
+        }
+        #playAgainButton:hover {
+            background-color: #27ae60;
+            transform: translateX(-50%) scale(1.05);
         }
         .controls {
             display: flex;
@@ -102,6 +206,7 @@
             border: none;
             background-color: transparent;
             cursor: pointer;
+            filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.7));
         }
         #leftButton {
             background-image: url('https://cdn-icons-png.flaticon.com/512/318/318276.png');
@@ -121,6 +226,7 @@
         <div id="score">Score: X1.0</div>
         <div id="multiplier">Boost Multiplier: X1</div>
         <div id="rektMessage">Game Over</div>
+        <div id="finalScore">Final Score: X1.0</div>
         <button id="playAgainButton" onclick="restartGame()">Play Again</button>
         <canvas id="gameCanvas" width="1000" height="1000"></canvas>
     </div>
@@ -128,27 +234,33 @@
         <button class="control-button" id="leftButton"></button>
         <button class="control-button" id="rightButton"></button>
     </div>
+    <div id="leaderboard">
+        <h2>Leaderboard</h2>
+        <ul id="leaderboardList"></ul>
+    </div>
+    <div id="finalPopup">
+        <img src="background.webp" alt="Final Score Image">
+        <p id="popupScore">Final Score: X1.0</p>
+        <button onclick="closePopup()">Close</button>
+    </div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
         const dogImage = new Image();
-        dogImage.src = './dog_head_cropped.png';
-        dogImage.onerror = () => console.error('Failed to load dog image');
+        dogImage.src = 'dog_head_cropped.png';
 
         const bullishCandle = new Image();
-        bullishCandle.src = './Bullish.png';
-        bullishCandle.onerror = () => console.error('Failed to load bullish candle image');
+        bullishCandle.src = 'Bullish.png';
 
         const bearishCandle = new Image();
-        bearishCandle.src = './Brearish.png';
-        bearishCandle.onerror = () => console.error('Failed to load bearish candle image');
+        bearishCandle.src = 'Brearish.png';
 
         const burgerImage = new Image();
-        burgerImage.src = './burger.png';
-        burgerImage.onerror = () => console.error('Failed to load burger image');
+        burgerImage.src = 'burger.png';
 
+        let nickname = localStorage.getItem('nickname');
         let dog = {
             x: canvas.width / 2 - 50,
             y: canvas.height - 120,
@@ -164,6 +276,7 @@
         let gameSpeed = 2;
         const candles = [];
         let gameOver = false;
+        let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
         let burger = null;
 
         function createCandle() {
@@ -262,11 +375,50 @@
 
         function endGame() {
             document.getElementById('rektMessage').style.display = 'block';
+            document.getElementById('finalScore').innerText = `Final Score: X${score.toFixed(1)}`;
+            document.getElementById('finalScore').style.display = 'block';
             document.getElementById('playAgainButton').style.display = 'block';
             document.getElementById('score').style.display = 'none';
             document.getElementById('multiplier').style.display = 'none';
             clearInterval(candleInterval);
             clearInterval(burgerInterval);
+
+            document.getElementById('popupScore').innerText = `Final Score: X${score.toFixed(1)}`;
+            document.getElementById('finalPopup').style.display = 'block';
+
+            if (!nickname) {
+                nickname = prompt("Enter your nickname:");
+                if (nickname) {
+                    localStorage.setItem('nickname', nickname);
+                }
+            }
+
+            if (score > 1.0) {
+                leaderboard.push({ nickname, score: score.toFixed(1) });
+                leaderboard.sort((a, b) => b.score - a.score);
+                if (leaderboard.length > 10) {
+                    leaderboard.pop();
+                }
+                localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+                updateLeaderboard();
+            }
+        }
+
+        function updateLeaderboard() {
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = '';
+            leaderboard.forEach((entry, index) => {
+                const listItem = document.createElement('li');
+                listItem.innerText = `${index + 1}. ${entry.nickname}`;
+                const scoreSpan = document.createElement('span');
+                scoreSpan.innerText = `X${entry.score}`;
+                listItem.appendChild(scoreSpan);
+                leaderboardList.appendChild(listItem);
+            });
+        }
+
+        function closePopup() {
+            document.getElementById('finalPopup').style.display = 'none';
         }
 
         function gameLoop() {
@@ -295,6 +447,19 @@
             }
         });
 
+        document.getElementById('leftButton').addEventListener('mousedown', function () {
+            dog.movingLeft = true;
+        });
+        document.getElementById('leftButton').addEventListener('mouseup', function () {
+            dog.movingLeft = false;
+        });
+        document.getElementById('rightButton').addEventListener('mousedown', function () {
+            dog.movingRight = true;
+        });
+        document.getElementById('rightButton').addEventListener('mouseup', function () {
+            dog.movingRight = false;
+        });
+
         function moveDog() {
             if (dog.movingLeft && dog.x > 0) {
                 dog.x -= dog.speed;
@@ -307,11 +472,14 @@
         let candleInterval = setInterval(createCandle, 500);
         let burgerInterval = setInterval(createBurger, 2000);
 
-        gameLoop();
-        setInterval(moveDog, 20);
+        dogImage.onload = function () {
+            gameLoop();
+            setInterval(moveDog, 20);
+        };
 
         function restartGame() {
             document.getElementById('rektMessage').style.display = 'none';
+            document.getElementById('finalScore').style.display = 'none';
             document.getElementById('playAgainButton').style.display = 'none';
             document.getElementById('score').style.display = 'block';
             document.getElementById('multiplier').style.display = 'block';
@@ -330,6 +498,8 @@
             updateMultiplier();
             gameLoop();
         }
+
+        updateLeaderboard();
     </script>
 </body>
 </html>
