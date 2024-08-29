@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gringo Game</title>
     <style>
-        /* CSS Styles here */
-        /* Keeping the styles the same as previously provided */
+        /* All the previously defined styles remain the same */
     </style>
 </head>
 <body>
@@ -15,7 +14,7 @@
         <div id="multiplier">Boost Multiplier: X1</div>
         <div id="rektMessage">Game Over</div>
         <div id="finalScore">Final Score: X1.0</div>
-        <button id="playAgainButton" onclick="restartGame()">Play Again</button>
+        <button id="playAgainButton" onclick="game.restartGame()">Play Again</button>
         <canvas id="gameCanvas" width="1000" height="1000"></canvas>
     </div>
     <div class="controls">
@@ -29,12 +28,12 @@
     <div id="finalPopup">
         <img src="background.webp" alt="Final Score Image">
         <p id="popupScore">Final Score: X1.0</p>
-        <button onclick="closePopup()">Close</button>
+        <button onclick="game.closePopup()">Close</button>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const game = new GringoGame();
+            window.game = new GringoGame();
             game.init();
         });
 
@@ -53,34 +52,43 @@
                 this.burger = null;
                 this.assetsLoaded = false;
 
-                this.dogImage = new Image();
-                this.dogImage.src = 'dog_head_cropped.png';
-                this.bullishCandle = new Image();
-                this.bullishCandle.src = 'Bullish.png';
-                this.bearishCandle = new Image();
-                this.bearishCandle.src = 'Brearish.png';
-                this.burgerImage = new Image();
-                this.burgerImage.src = 'burger.png';
+                this.assets = {
+                    dogImage: new Image(),
+                    bullishCandle: new Image(),
+                    bearishCandle: new Image(),
+                    burgerImage: new Image()
+                };
 
-                this.assets = [this.dogImage, this.bullishCandle, this.bearishCandle, this.burgerImage];
-                this.assetsLoaded = 0;
+                this.assets.dogImage.src = 'dog_head_cropped.png';
+                this.assets.bullishCandle.src = 'Bullish.png';
+                this.assets.bearishCandle.src = 'Brearish.png';
+                this.assets.burgerImage.src = 'burger.png';
 
-                this.dogImage.onload = () => this.assetLoaded();
-                this.bullishCandle.onload = () => this.assetLoaded();
-                this.bearishCandle.onload = () => this.assetLoaded();
-                this.burgerImage.onload = () => this.assetLoaded();
-            }
-
-            assetLoaded() {
-                this.assetsLoaded++;
-                if (this.assetsLoaded === this.assets.length) {
-                    this.startGame();
-                }
+                this.loadedAssets = 0;
             }
 
             init() {
                 this.bindControls();
                 this.updateLeaderboard();
+                this.loadAssets();
+            }
+
+            loadAssets() {
+                Object.values(this.assets).forEach(asset => {
+                    asset.onload = () => {
+                        this.loadedAssets++;
+                        if (this.loadedAssets === Object.keys(this.assets).length) {
+                            this.startGame();
+                        }
+                    };
+                    asset.onerror = () => {
+                        console.error('Error loading asset:', asset.src);
+                        this.loadedAssets++;
+                        if (this.loadedAssets === Object.keys(this.assets).length) {
+                            this.startGame();
+                        }
+                    };
+                });
             }
 
             bindControls() {
@@ -118,8 +126,8 @@
                 this.updateScore();
                 this.updateMultiplier();
 
-                this.candleInterval = setInterval(() => this.createCandle(), 500);
-                this.burgerInterval = setInterval(() => this.createBurger(), 2000);
+                this.candleInterval = setInterval(() => this.createCandle(), 1000 / this.gameSpeed);
+                this.burgerInterval = setInterval(() => this.createBurger(), 5000 / this.gameSpeed);
 
                 requestAnimationFrame(() => this.gameLoop());
             }
@@ -132,7 +140,7 @@
                     width: 60,
                     height: 120,
                     speed: this.gameSpeed,
-                    image: isBullish ? this.bullishCandle : this.bearishCandle,
+                    image: isBullish ? this.assets.bullishCandle : this.assets.bearishCandle,
                     type: isBullish ? 'bullish' : 'bearish'
                 });
             }
@@ -151,7 +159,7 @@
             }
 
             drawDog() {
-                this.ctx.drawImage(this.dogImage, this.dog.x, this.dog.y, this.dog.width, this.dog.height);
+                this.ctx.drawImage(this.assets.dogImage, this.dog.x, this.dog.y, this.dog.width, this.dog.height);
             }
 
             drawCandles() {
@@ -191,7 +199,7 @@
             drawBurger() {
                 if (this.burger) {
                     this.burger.y += this.burger.speed;
-                    this.ctx.drawImage(this.burgerImage, this.burger.x, this.burger.y, this.burger.width, this.burger.height);
+                    this.ctx.drawImage(this.assets.burgerImage, this.burger.x, this.burger.y, this.burger.width, this.burger.height);
 
                     if (
                         this.dog.x < this.burger.x + this.burger.width &&
@@ -270,13 +278,27 @@
                 });
             }
 
+            closePopup() {
+                document.getElementById('finalPopup').style.display = 'none';
+            }
+
             gameLoop() {
                 if (!this.gameOver) {
                     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                     this.drawDog();
                     this.drawCandles();
                     this.drawBurger();
+                    this.moveDog();
                     requestAnimationFrame(() => this.gameLoop());
+                }
+            }
+
+            moveDog() {
+                if (this.dog.movingLeft && this.dog.x > 0) {
+                    this.dog.x -= this.dog.speed;
+                }
+                if (this.dog.movingRight && this.dog.x < this.canvas.width - this.dog.width) {
+                    this.dog.x += this.dog.speed;
                 }
             }
 
@@ -295,8 +317,8 @@
                 this.burger = null;
                 this.gameOver = false;
 
-                this.candleInterval = setInterval(() => this.createCandle(), 500);
-                this.burgerInterval = setInterval(() => this.createBurger(), 2000);
+                this.candleInterval = setInterval(() => this.createCandle(), 1000 / this.gameSpeed);
+                this.burgerInterval = setInterval(() => this.createBurger(), 5000 / this.gameSpeed);
                 this.updateScore();
                 this.updateMultiplier();
                 this.gameLoop();
