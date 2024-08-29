@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gringo Game</title>
     <style>
-        /* Add your CSS styles here */
         body {
             margin: 0;
             overflow: hidden;
@@ -173,23 +172,6 @@
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.7);
             font-weight: bold;
         }
-        #finalPopup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background-color: white;
-            border: 2px solid #000;
-            border-radius: 10px;
-            z-index: 10;
-            text-align: center;
-        }
-        #finalPopup img {
-            max-width: 100%;
-            height: auto;
-        }
         #playAgainButton {
             display: none;
             position: absolute;
@@ -263,22 +245,6 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            initGame();
-        });
-
-        let gameInterval;
-        let burgerInterval;
-        let dog = { x: 450, y: 880, width: 100, height: 100, speed: 20, movingLeft: false, movingRight: false };
-        let score = 1.0;
-        let multiplier = 1;
-        let gameSpeed = 2;
-        const candles = [];
-        let gameOver = false;
-        let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || {};
-        let burger = null;
-        let nickname = localStorage.getItem('nickname');
-
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -294,52 +260,24 @@
         const burgerImage = new Image();
         burgerImage.src = 'burger.png';
 
-        function initGame() {
-            bindControls();
-            updateLeaderboard();
-            startGame();
-        }
+        let nickname = localStorage.getItem('nickname');
+        let dog = {
+            x: canvas.width / 2 - 50,
+            y: canvas.height - 120,
+            width: 100,
+            height: 100,
+            speed: 20,
+            movingLeft: false,
+            movingRight: false
+        };
 
-        function bindControls() {
-            document.addEventListener('keydown', handleKeyDown);
-            document.addEventListener('keyup', handleKeyUp);
-            document.getElementById('leftButton').addEventListener('mousedown', () => dog.movingLeft = true);
-            document.getElementById('leftButton').addEventListener('mouseup', () => dog.movingLeft = false);
-            document.getElementById('rightButton').addEventListener('mousedown', () => dog.movingRight = true);
-            document.getElementById('rightButton').addEventListener('mouseup', () => dog.movingRight = false);
-        }
-
-        function handleKeyDown(event) {
-            if (event.code === 'ArrowLeft') {
-                dog.movingLeft = true;
-            } else if (event.code === 'ArrowRight') {
-                dog.movingRight = true;
-            }
-        }
-
-        function handleKeyUp(event) {
-            if (event.code === 'ArrowLeft') {
-                dog.movingLeft = false;
-            } else if (event.code === 'ArrowRight') {
-                dog.movingRight = false;
-            }
-        }
-
-        function startGame() {
-            gameOver = false;
-            candles.length = 0;
-            score = 1.0;
-            multiplier = 1;
-            gameSpeed = 2;
-            burger = null;
-            updateScore();
-            updateMultiplier();
-
-            gameInterval = setInterval(createCandle, 1000 / gameSpeed);
-            burgerInterval = setInterval(createBurger, 5000 / gameSpeed);
-
-            requestAnimationFrame(gameLoop);
-        }
+        let score = 1.0;
+        let multiplier = 1;
+        let gameSpeed = 2;
+        const candles = [];
+        let gameOver = false;
+        let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+        let burger = null;
 
         function createCandle() {
             const isBullish = Math.random() > 0.5;
@@ -395,7 +333,7 @@
                         endGame();
                     }
                     candles.splice(index, 1);
-                    gameSpeed += 0.1;
+                    gameSpeed += 0.1; // Slower speed increase
                     updateScore();
                 }
 
@@ -442,8 +380,7 @@
             document.getElementById('playAgainButton').style.display = 'block';
             document.getElementById('score').style.display = 'none';
             document.getElementById('multiplier').style.display = 'none';
-
-            clearInterval(gameInterval);
+            clearInterval(candleInterval);
             clearInterval(burgerInterval);
 
             document.getElementById('popupScore').innerText = `Final Score: X${score.toFixed(1)}`;
@@ -457,32 +394,20 @@
             }
 
             if (score > 1.0) {
-                if (leaderboard[nickname]) {
-                    if (score > parseFloat(leaderboard[nickname])) {
-                        leaderboard[nickname] = score.toFixed(1);
-                    }
-                } else {
-                    leaderboard[nickname] = score.toFixed(1);
+                leaderboard.push({ nickname, score: score.toFixed(1) });
+                leaderboard.sort((a, b) => b.score - a.score);
+                if (leaderboard.length > 10) {
+                    leaderboard.pop();
                 }
-
-                const sortedLeaderboard = Object.keys(leaderboard)
-                    .map(name => ({ nickname: name, score: leaderboard[name] }))
-                    .sort((a, b) => b.score - a.score);
-
-                if (sortedLeaderboard.length > 10) {
-                    sortedLeaderboard.splice(10);
-                }
-
                 localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-                updateLeaderboard(sortedLeaderboard);
+                updateLeaderboard();
             }
         }
 
-        function updateLeaderboard(sortedLeaderboard) {
+        function updateLeaderboard() {
             const leaderboardList = document.getElementById('leaderboardList');
             leaderboardList.innerHTML = '';
-
-            sortedLeaderboard.forEach((entry, index) => {
+            leaderboard.forEach((entry, index) => {
                 const listItem = document.createElement('li');
                 listItem.innerText = `${index + 1}. ${entry.nickname}`;
                 const scoreSpan = document.createElement('span');
@@ -502,10 +427,38 @@
                 drawDog();
                 drawCandles();
                 drawBurger();
-                moveDog();
                 requestAnimationFrame(gameLoop);
             }
         }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.code === 'ArrowLeft') {
+                dog.movingLeft = true;
+            } else if (event.code === 'ArrowRight') {
+                dog.movingRight = true;
+            }
+        });
+
+        document.addEventListener('keyup', function (event) {
+            if (event.code === 'ArrowLeft') {
+                dog.movingLeft = false;
+            } else if (event.code === 'ArrowRight') {
+                dog.movingRight = false;
+            }
+        });
+
+        document.getElementById('leftButton').addEventListener('mousedown', function () {
+            dog.movingLeft = true;
+        });
+        document.getElementById('leftButton').addEventListener('mouseup', function () {
+            dog.movingLeft = false;
+        });
+        document.getElementById('rightButton').addEventListener('mousedown', function () {
+            dog.movingRight = true;
+        });
+        document.getElementById('rightButton').addEventListener('mouseup', function () {
+            dog.movingRight = false;
+        });
 
         function moveDog() {
             if (dog.movingLeft && dog.x > 0) {
@@ -515,6 +468,14 @@
                 dog.x += dog.speed;
             }
         }
+
+        let candleInterval = setInterval(createCandle, 500);
+        let burgerInterval = setInterval(createBurger, 2000);
+
+        dogImage.onload = function () {
+            gameLoop();
+            setInterval(moveDog, 20);
+        };
 
         function restartGame() {
             document.getElementById('rektMessage').style.display = 'none';
@@ -531,12 +492,14 @@
             burger = null;
             gameOver = false;
 
-            gameInterval = setInterval(createCandle, 1000 / gameSpeed);
-            burgerInterval = setInterval(createBurger, 5000 / gameSpeed);
+            candleInterval = setInterval(createCandle, 500);
+            burgerInterval = setInterval(createBurger, 2000);
             updateScore();
             updateMultiplier();
             gameLoop();
         }
+
+        updateLeaderboard();
     </script>
 </body>
 </html>
