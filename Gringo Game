@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gringo Game</title>
     <style>
-        /* Add your CSS styles here */
         body {
             margin: 0;
             overflow: hidden;
@@ -50,18 +49,6 @@
             font-size: 18px;
             overflow-y: auto;
             z-index: 2;
-            animation: slideIn 0.5s forwards;
-            transition: all 0.3s ease;
-        }
-        @keyframes slideIn {
-            from {
-                right: -350px;
-                opacity: 0;
-            }
-            to {
-                right: 10px;
-                opacity: 1;
-            }
         }
         #leaderboard h2 {
             text-align: center;
@@ -87,12 +74,6 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
-        }
-        #leaderboard li:hover {
-            background-color: #00ff88;
-            color: #000;
-            transform: scale(1.05);
         }
         #leaderboard span {
             font-weight: bold;
@@ -144,18 +125,6 @@
             border-radius: 20px;
             z-index: 2;
             text-align: center;
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7);
-            animation: popIn 0.5s ease-in-out;
-        }
-        @keyframes popIn {
-            0% {
-                transform: translate(-50%, -50%) scale(0.7);
-                opacity: 0;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
         }
         #finalScore {
             display: none;
@@ -205,12 +174,7 @@
             cursor: pointer;
             z-index: 3;
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
             font-weight: bold;
-        }
-        #playAgainButton:hover {
-            background-color: #27ae60;
-            transform: translateX(-50%) scale(1.05);
         }
         .controls {
             display: flex;
@@ -335,8 +299,21 @@
             updateScore();
             updateMultiplier();
 
-            gameInterval = setInterval(createCandle, 1000 / gameSpeed);
-            burgerInterval = setInterval(createBurger, 5000 / gameSpeed);
+            gameInterval = setInterval(() => {
+                try {
+                    createCandle();
+                } catch (error) {
+                    console.error('Error creating candle:', error);
+                }
+            }, 1000 / gameSpeed);
+
+            burgerInterval = setInterval(() => {
+                try {
+                    createBurger();
+                } catch (error) {
+                    console.error('Error creating burger:', error);
+                }
+            }, 5000 / gameSpeed);
 
             requestAnimationFrame(gameLoop);
         }
@@ -498,12 +475,16 @@
 
         function gameLoop() {
             if (!gameOver) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                drawDog();
-                drawCandles();
-                drawBurger();
-                moveDog();
-                requestAnimationFrame(gameLoop);
+                try {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    drawDog();
+                    drawCandles();
+                    drawBurger();
+                    moveDog();
+                    requestAnimationFrame(gameLoop);
+                } catch (error) {
+                    console.error('Error during game loop:', error);
+                }
             }
         }
 
