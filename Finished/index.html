@@ -8,25 +8,32 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: black;
+            background-image: url('./Gringo back Ground.jpeg');
+            background-size: 150px 150px;
+            background-repeat: repeat;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             flex-direction: column;
+            background-color: black; /* Fallback color */
         }
         #gameContainer {
             position: relative;
             width: 1000px;
             height: 1000px;
             border-radius: 15px;
-            background-color: grey;
+            background-image: url('./image.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
             box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.8);
             overflow: hidden;
             z-index: 1;
             border: 10px solid #333;
             box-sizing: border-box;
+            background-color: grey; /* Fallback color */
         }
         #score {
             position: absolute;
@@ -97,10 +104,15 @@
             cursor: pointer;
         }
         #leftButton {
-            background-color: #00f;
+            background-image: url('https://cdn-icons-png.flaticon.com/512/318/318276.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transform: scaleX(-1);
         }
         #rightButton {
-            background-color: #f00;
+            background-image: url('https://cdn-icons-png.flaticon.com/512/318/318276.png');
+            background-size: contain;
+            background-repeat: no-repeat;
         }
     </style>
 </head>
@@ -120,6 +132,22 @@
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+
+        const dogImage = new Image();
+        dogImage.src = './dog_head_cropped.png';
+        dogImage.onerror = () => console.error('Failed to load dog image');
+
+        const bullishCandle = new Image();
+        bullishCandle.src = './Bullish.png';
+        bullishCandle.onerror = () => console.error('Failed to load bullish candle image');
+
+        const bearishCandle = new Image();
+        bearishCandle.src = './Brearish.png';
+        bearishCandle.onerror = () => console.error('Failed to load bearish candle image');
+
+        const burgerImage = new Image();
+        burgerImage.src = './burger.png';
+        burgerImage.onerror = () => console.error('Failed to load burger image');
 
         let dog = {
             x: canvas.width / 2 - 50,
@@ -146,7 +174,7 @@
                 width: 60,
                 height: 120,
                 speed: gameSpeed,
-                color: isBullish ? 'green' : 'red',
+                image: isBullish ? bullishCandle : bearishCandle,
                 type: isBullish ? 'bullish' : 'bearish'
             });
         }
@@ -159,22 +187,24 @@
                     y: 0,
                     width: 80,
                     height: 80,
-                    speed: gameSpeed * 1.5,
-                    color: 'yellow'
+                    speed: gameSpeed * 1.5
                 };
             }
         }
 
         function drawDog() {
-            ctx.fillStyle = 'blue';
-            ctx.fillRect(dog.x, dog.y, dog.width, dog.height);
+            ctx.drawImage(dogImage, dog.x, dog.y, dog.width, dog.height);
         }
 
         function drawCandles() {
             candles.forEach((candle, index) => {
                 candle.y += candle.speed;
-                ctx.fillStyle = candle.color;
-                ctx.fillRect(candle.x, candle.y, candle.width, candle.height);
+
+                ctx.drawImage(candle.image, candle.x, candle.y, candle.width, candle.height);
+
+                ctx.strokeStyle = candle.type === 'bullish' ? '#00ff00' : '#ff0000';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(candle.x, candle.y, candle.width, candle.height);
 
                 if (
                     dog.x < candle.x + candle.width &&
@@ -190,7 +220,7 @@
                         endGame();
                     }
                     candles.splice(index, 1);
-                    gameSpeed += 0.1;
+                    gameSpeed += 0.1; // Slower speed increase
                     updateScore();
                 }
 
@@ -203,8 +233,7 @@
         function drawBurger() {
             if (burger) {
                 burger.y += burger.speed;
-                ctx.fillStyle = burger.color;
-                ctx.fillRect(burger.x, burger.y, burger.width, burger.height);
+                ctx.drawImage(burgerImage, burger.x, burger.y, burger.width, burger.height);
 
                 if (
                     dog.x < burger.x + burger.width &&
